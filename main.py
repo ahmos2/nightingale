@@ -1,4 +1,4 @@
-import cherrypy,os
+import cherrypy,os,json
 from ws4py.server.cherrypyserver import WebSocketPlugin, WebSocketTool
 from ws4py.websocket import WebSocket,EchoWebSocket
 
@@ -17,11 +17,12 @@ class watchdog(object):
     @cherrypy.expose
     def Alive(self,company,ship,controller,instance,day,ms):
         print company,ship,controller,instance,day,ms
-        cherrypy.engine.publish('websocket-broadcast',ms)
+        cherrypy.engine.publish('websocket-broadcast',json.dumps({"type":"alive","company":company,"ship":ship,"controller":controller,"instance":instance,"day":day,"ms":ms}))
         return "ok"
     @cherrypy.expose
     def Alert(self,company,ship,controller,instance,error):
         print company,ship,controller,instance,error
+        cherrypy.engine.publish('websocket-broadcast',json.dumps({"type":"error","company":company,"ship":ship,"controller":controller,"instance":instance,"error":error}))
         return "ok"
     @cherrypy.expose
     def ws(self):
