@@ -1,5 +1,5 @@
 var timer,warningLevel=0,errorLevel=0;
-ws = new WebSocket("ws://192.168.1.15:8080/ws");
+ws = new WebSocket("ws://"+window.location.host+"/ws");
 
 function ms2time(ms) {
     var time = ms / 3600000;
@@ -19,6 +19,7 @@ function ms2time(ms) {
 
 function doError(obj)
 {
+    if(errorLevel>0)return;
     errorLevel=1;
     document.body.style.backgroundColor="red";
     alert("Error state for "+obj.company+":"+obj.controller+":"+obj.instance+":"+obj.instance)
