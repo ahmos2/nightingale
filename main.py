@@ -40,10 +40,14 @@ cherrypy.config.update(
                        
 
 
-print cherrypy.tools.websocket
+print cherrypy.config
 cherrypy.quickstart(watchdog(),"/",config={
         '/ws': {
             'tools.websocket.on': True,
             'tools.websocket.handler_cls': WSHandler
-            }
-        })
+            },
+  '/static' : {
+    'tools.staticdir.on'            : True,
+    'tools.staticdir.dir'           : os.path.join(os.path.abspath(os.path.dirname(__file__)), 'static')
+  }
+})
