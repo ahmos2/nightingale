@@ -1,4 +1,4 @@
-var AliveTooSoonAction = 2;
+var AliveTooSoonAction = 2, AliveTooLateAction = 1;
 
 var state={};
 ws = new WebSocket("ws://" + window.location.host + "/ws");
@@ -20,7 +20,7 @@ function ms2time(ms) {
     };
 }
 
-function setDivColor4Obj(obj,color)
+function setDivColor4Obj(obj, color)
 {
     var div = document.getElementById(objName(obj));
     if(div === null) 
@@ -85,9 +85,12 @@ ws.onmessage = function(evt) {
             else if(AliveTooSoonAction === 2) doError(obj);
         }
 
-        if(state[objName(obj)].errorLevel == 0&&state[objName(obj)].warningLevel == 0) setDivColor4Obj(obj,"green");
+        if(state[objName(obj)].errorLevel == 0 && state[objName(obj)].warningLevel == 0) setDivColor4Obj(obj, "green");
         state[objName(obj)].timer = setInterval(function() {
-            doWarning(obj);
-        }, 10000+slack);
+            if(AliveTooLateAction === 1)
+                doWarning(obj);
+            if(AliveTooLateAction === 2) 
+                doError(obj);
+        }, 10000 + slack);
     }
 }
