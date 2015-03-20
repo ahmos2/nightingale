@@ -1,4 +1,4 @@
-var timer,state={};
+var state={};
 ws = new WebSocket("ws://"+window.location.host+"/ws");
 
 function ms2time(ms) {
@@ -56,19 +56,13 @@ function doWarning(obj)
 ws.onmessage = function(evt) {
     var obj;
     eval("obj="+evt.data)
-    if(state[objName(obj)]===null||state[objName(obj)]===undefined)state[objName(obj)]={errorLevel:0,warningLevel:0};
+    if(state[objName(obj)]===null||state[objName(obj)]===undefined)state[objName(obj)]={errorLevel:0,warningLevel:0,timer:0};
     if (obj.type === "error") doError(obj);
     else {
-        if (timer !== null && typeof timer !== "undefined" && typeof timer[obj.company] !== "undefined" && typeof timer[obj.company][obj.ship] !== "undefined" && typeof timer[obj.company][obj.ship][obj.controller] !== "undefined" && typeof timer[obj.company][obj.ship][obj.controller][obj.instance] !== "undefined") clearInterval(timer[obj.company][obj.ship][obj.controller][obj.instance]);
-        else if(timer==null)timer={};
-        if(typeof timer[obj.company] === "undefined")timer[obj.company]={};
-        if(typeof timer[obj.company][obj.ship] === "undefined")timer[obj.company][obj.ship]={};
-        if(typeof timer[obj.company][obj.ship][obj.controller] === "undefined")timer[obj.company][obj.ship][obj.controller]={};
-        if(typeof timer[obj.company][obj.ship][obj.controller][obj.instance] === "undefined")timer[obj.company][obj.ship][obj.controller][obj.instance]={};
-
+        if(state[objName(obj)].timer!=0) clearInterval(state[objName(obj)].timer);
         if(state[objName(obj)].warningLevel>0)state[objName(obj)].warningLevel--;
         if(state[objName(obj)].errorLevel==0&&state[objName(obj)].warningLevel==0) setDivColor4Obj(obj,"green");
-timer[obj.company][obj.ship][obj.controller][obj.instance] = setInterval(function() {
+        state[objName(obj)].timer = setInterval(function() {
             doWarning(obj);
         }, 11000);
     }
