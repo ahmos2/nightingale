@@ -68,11 +68,11 @@ ws.onmessage = function(evt) {
 
     if (obj.type === "error") doError(obj);
     else {
-        if(state[objName(obj)].timer! = 0) clearInterval(state[objName(obj)].timer);
+        if(state[objName(obj)].timer != 0) clearInterval(state[objName(obj)].timer);
         if(state[objName(obj)].warningLevel > 0)state[objName(obj)].warningLevel--;
         if(state[objName(obj)].errorLevel == 0&&state[objName(obj)].warningLevel == 0) setDivColor4Obj(obj,"green");
         state[objName(obj)].timer = setInterval(function() {
             doWarning(obj);
-        }, 11000);
+        }, 10500);
     }
 }
