@@ -17,6 +17,21 @@ function ms2time(ms) {
     };
 }
 
+function setDivColor4Obj(obj,color)
+{
+    var div=document.getElementById(objName(obj));
+    if(div===null) 
+    {
+        div=document.createElement('div');
+        div.id=objName(obj);
+        div.style.height="100px";
+        div.style.width="100px";
+        div.innerText=objName(obj);
+        document.getElementsByTagName('body')[0].appendChild(div);
+    }
+    div.style.backgroundColor=color;
+}
+
 function objName(obj)
 {
     return obj.company+":"+obj.ship+":"+obj.controller+":"+obj.instance;
@@ -26,13 +41,13 @@ function doError(obj)
 {
     if(errorLevel>0)return;
     errorLevel=1;
-    document.body.style.backgroundColor="red";
+    setDivColor4Obj(obj,"red");
     alert("Error state for "+objName(obj));
 }
 function doWarning(obj)
 {
     if(warningLevel<2) {warningLevel++;
-    document.body.style.backgroundColor="yellow";
+    setDivColor4Obj(obj,"yellow");
     alert("Warning state for "+objName(obj)+" level "+warningLevel)
     }
     else doError(obj)
@@ -51,7 +66,7 @@ ws.onmessage = function(evt) {
         if(typeof timer[obj.company][obj.ship][obj.controller][obj.instance] === "undefined")timer[obj.company][obj.ship][obj.controller][obj.instance]={};
 
         if(warningLevel>0)warningLevel--;
-        if(errorLevel==0&&warningLevel==0) document.body.style.backgroundColor="green";
+        if(errorLevel==0&&warningLevel==0) setDivColor4Obj(obj,"green");
 timer[obj.company][obj.ship][obj.controller][obj.instance] = setInterval(function() {
             doWarning(obj);
         }, 11000);
