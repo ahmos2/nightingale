@@ -1,6 +1,6 @@
 var AliveTooSoonAction = 2, AliveTooLateAction = 1;
 var WarningEscalate2ErrorTrigger = 2;
-var slack = 100;
+var slack = 50;
 
 var state={};
 var ws = new WebSocket("ws://" + window.location.host + "/ws");
@@ -84,6 +84,11 @@ ws.onmessage = function(evt) {
             if(AliveTooSoonAction === 1) doWarning(obj);
             else if(AliveTooSoonAction === 2) doError(obj);
         }
+
+        usedSlack = state[objName(obj)].lastMessageTs + 10000 - nowTs;
+        if(usedSlack < 0) usedSlack =- usedSlack;
+        if(state[objName(obj)].lastMessageTs != 0) console.log("used slack " + usedSlack);
+
         state[objName(obj)].lastMessageTs = nowTs;
 
         if(state[objName(obj)].errorLevel == 0 && state[objName(obj)].warningLevel == 0) setDivColor4Obj(obj, "green");
