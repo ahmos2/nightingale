@@ -17,18 +17,23 @@ function ms2time(ms) {
     };
 }
 
+function objName(obj)
+{
+    return obj.company+":"+obj.ship+":"+obj.controller+":"+obj.instance;
+}
+
 function doError(obj)
 {
     if(errorLevel>0)return;
     errorLevel=1;
     document.body.style.backgroundColor="red";
-    alert("Error state for "+obj.company+":"+obj.controller+":"+obj.instance+":"+obj.instance)
+    alert("Error state for "+objName(obj));
 }
 function doWarning(obj)
 {
     if(warningLevel<2) {warningLevel++;
     document.body.style.backgroundColor="yellow";
-    alert("Warning state for "+obj.company+":"+obj.controller+":"+obj.instance+":"+obj.instance+" level "+warningLevel)
+    alert("Warning state for "+objName(obj)+" level "+warningLevel)
     }
     else doError(obj)
 }
