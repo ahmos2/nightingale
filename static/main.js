@@ -1,4 +1,4 @@
-var timer,warningLevel=0,errorLevel=0;
+var timer,state={};
 ws = new WebSocket("ws://"+window.location.host+"/ws");
 
 function ms2time(ms) {
@@ -39,16 +39,16 @@ function objName(obj)
 
 function doError(obj)
 {
-    if(errorLevel>0)return;
-    errorLevel=1;
+    if(state[objName(obj)].errorLevel>0)return;
+    state[objName(obj)].errorLevel=1;
     setDivColor4Obj(obj,"red");
     alert("Error state for "+objName(obj));
 }
 function doWarning(obj)
 {
-    if(warningLevel<2) {warningLevel++;
+    if(state[objName(obj)].warningLevel<2) {state[objName(obj)].warningLevel++;
     setDivColor4Obj(obj,"yellow");
-    alert("Warning state for "+objName(obj)+" level "+warningLevel)
+    alert("Warning state for "+objName(obj)+" level "+state[objName(obj)].warningLevel)
     }
     else doError(obj)
 }
@@ -56,6 +56,7 @@ function doWarning(obj)
 ws.onmessage = function(evt) {
     var obj;
     eval("obj="+evt.data)
+    if(state[objName(obj)]===null||state[objName(obj)]===undefined)state[objName(obj)]={errorLevel:0,warningLevel:0};
     if (obj.type === "error") doError(obj);
     else {
         if (timer !== null && typeof timer !== "undefined" && typeof timer[obj.company] !== "undefined" && typeof timer[obj.company][obj.ship] !== "undefined" && typeof timer[obj.company][obj.ship][obj.controller] !== "undefined" && typeof timer[obj.company][obj.ship][obj.controller][obj.instance] !== "undefined") clearInterval(timer[obj.company][obj.ship][obj.controller][obj.instance]);
@@ -65,8 +66,8 @@ ws.onmessage = function(evt) {
         if(typeof timer[obj.company][obj.ship][obj.controller] === "undefined")timer[obj.company][obj.ship][obj.controller]={};
         if(typeof timer[obj.company][obj.ship][obj.controller][obj.instance] === "undefined")timer[obj.company][obj.ship][obj.controller][obj.instance]={};
 
-        if(warningLevel>0)warningLevel--;
-        if(errorLevel==0&&warningLevel==0) setDivColor4Obj(obj,"green");
+        if(state[objName(obj)].warningLevel>0)state[objName(obj)].warningLevel--;
+        if(state[objName(obj)].errorLevel==0&&state[objName(obj)].warningLevel==0) setDivColor4Obj(obj,"green");
 timer[obj.company][obj.ship][obj.controller][obj.instance] = setInterval(function() {
             doWarning(obj);
         }, 11000);
