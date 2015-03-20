@@ -1,5 +1,8 @@
+var AliveTooSoonAction = 2;
+
 var state={};
 ws = new WebSocket("ws://" + window.location.host + "/ws");
+slack = 50
 
 function ms2time(ms) {
     var time = ms / 3600000;
@@ -63,16 +66,28 @@ ws.onmessage = function(evt) {
             {
                 errorLevel : 0,
                 warningLevel : 0,
-                timer : 0
+                timer : 0,
+                lastMessageTs : 0
             };
+
+    var nowTs=new Date().getTime();
+    state[objName(obj)].lastMessageTs=nowTs;
 
     if (obj.type === "error") doError(obj);
     else {
         if(state[objName(obj)].timer != 0) clearInterval(state[objName(obj)].timer);
         if(state[objName(obj)].warningLevel > 0)state[objName(obj)].warningLevel--;
+
+        if(nowTs - state[objName(obj)].lastMessageTs - 10000)
+        {
+            console.log("Got message too soon");
+            if(AliveTooSoonAction === 1) doWarning(obj);
+            else if(AliveTooSoonAction === 2) doError(obj);
+        }
+
         if(state[objName(obj)].errorLevel == 0&&state[objName(obj)].warningLevel == 0) setDivColor4Obj(obj,"green");
         state[objName(obj)].timer = setInterval(function() {
             doWarning(obj);
-        }, 10500);
+        }, 10000+slack);
     }
 }
