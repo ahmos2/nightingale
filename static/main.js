@@ -1,8 +1,9 @@
 var AliveTooSoonAction = 2, AliveTooLateAction = 1;
+var WarningEscalate2ErrorTrigger = 2;
+var slack = 100;
 
 var state={};
-ws = new WebSocket("ws://" + window.location.host + "/ws");
-slack = 50
+var ws = new WebSocket("ws://" + window.location.host + "/ws");
 
 function ms2time(ms) {
     var time = ms / 3600000;
@@ -49,7 +50,7 @@ function doError(obj)
 }
 function doWarning(obj)
 {
-    if(state[objName(obj)].warningLevel < 2)
+    if(WarningEscalate2ErrorTrigger <= 0 || state[objName(obj)].warningLevel < WarningEscalate2ErrorTrigger)
     {
         state[objName(obj)].warningLevel++;
         setDivColor4Obj(obj, "yellow");
@@ -71,19 +72,19 @@ ws.onmessage = function(evt) {
             };
 
     var nowTs=new Date().getTime();
-    state[objName(obj)].lastMessageTs=nowTs;
 
     if (obj.type === "error") doError(obj);
     else {
         if(state[objName(obj)].timer != 0) clearInterval(state[objName(obj)].timer);
         if(state[objName(obj)].warningLevel > 0)state[objName(obj)].warningLevel--;
 
-        if(nowTs - state[objName(obj)].lastMessageTs - 10000)
+        if(state[objName(obj)].lastMessageTs + 10000 - nowTs > slack)
         {
             console.log("Got message too soon");
             if(AliveTooSoonAction === 1) doWarning(obj);
             else if(AliveTooSoonAction === 2) doError(obj);
         }
+        state[objName(obj)].lastMessageTs = nowTs;
 
         if(state[objName(obj)].errorLevel == 0 && state[objName(obj)].warningLevel == 0) setDivColor4Obj(obj, "green");
         state[objName(obj)].timer = setInterval(function() {
