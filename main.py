@@ -31,6 +31,10 @@ class watchdog(object):
 
 cherrypy.config.update(
                        {
+                           'server.ssl_module':'builtin',
+                           'server.ssl_certificate':'/home/pi/certificate/remote1.crt',
+                           'server.ssl_private_key':'/home/pi/certificate/remote1.key',
+                           'server.certificate_chain':'/home/pi/certificate/rootCA.pem',
                            '/static' : 
                                {
                                    'tools.staticdir.root': os.path.abspath(os.path.join(os.path.dirname(__file__), 'static'))

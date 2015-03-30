@@ -3,7 +3,7 @@ var WarningEscalate2ErrorTrigger = 2;
 var slack = 50;
 
 var state={};
-var ws = new WebSocket("ws://" + window.location.host + "/ws");
+var ws = new WebSocket("wss://" + window.location.host + "/ws");
 
 function ms2time(ms) {
     var time = ms / 3600000;
