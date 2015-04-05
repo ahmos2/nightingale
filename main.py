@@ -20,6 +20,7 @@ class watchdog(object):
     def Alive(self,company,ship,controller,instance,day,ms,signature):
         print company,ship,controller,instance,day,ms
         if not self.CheckSignature(company,ship,controller,instance,signature):
+            cherrypy.engine.publish('websocket-broadcast',json.dumps({"type":"error","company":company,"ship":ship,"controller":controller,"instance":instance,"error":"Signature check failed"}))
             return "Signature check failed"
         cherrypy.engine.publish('websocket-broadcast',json.dumps({"type":"alive","company":company,"ship":ship,"controller":controller,"instance":instance,"day":day,"ms":ms}))
         return "ok"
@@ -27,6 +28,7 @@ class watchdog(object):
     def Alert(self,company,ship,controller,instance,error,signature):
         print company,ship,controller,instance,error
         if not self.CheckSignature(company,ship,controller,instance,signature):
+            cherrypy.engine.publish('websocket-broadcast',json.dumps({"type":"error","company":company,"ship":ship,"controller":controller,"instance":instance,"error":"Signature check failed"}))
             return "Signature check failed"
         cherrypy.engine.publish('websocket-broadcast',json.dumps({"type":"error","company":company,"ship":ship,"controller":controller,"instance":instance,"error":error}))
         return "ok"
