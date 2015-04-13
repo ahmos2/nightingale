@@ -22,6 +22,7 @@ class watchdog(object):
         if not self.CheckSignature(company,ship,controller,instance,signature):
             cherrypy.engine.publish('websocket-broadcast',json.dumps({"type":"error","company":company,"ship":ship,"controller":controller,"instance":instance,"error":"Signature check failed"}))
             return "Signature check failed"
+        self.setStateValue(self.UniqueNameForInstance(company,ship,controller,instance), "lastAlive",(day,ms))
         cherrypy.engine.publish('websocket-broadcast',json.dumps({"type":"alive","company":company,"ship":ship,"controller":controller,"instance":instance,"day":day,"ms":ms}))
         return "ok"
     @cherrypy.expose

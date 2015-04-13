@@ -78,17 +78,17 @@ ws.onmessage = function(evt) {
         if(state[objName(obj)].timer != 0) clearInterval(state[objName(obj)].timer);
         if(state[objName(obj)].warningLevel > 0)state[objName(obj)].warningLevel--;
 
-        if(state[objName(obj)].lastMessageTs + 10000 - nowTs > slack)
-        {
-            console.log("Got message too soon");
-            if(AliveTooSoonAction === 1) doWarning(obj);
-            else if(AliveTooSoonAction === 2) doError(obj);
+        if(state[objName(obj)].lastMessageTs != 0) {
+            usedSlack = state[objName(obj)].lastMessageTs + 10000 - nowTs;
+            if(usedSlack < 0) usedSlack =- usedSlack;
+
+            if(usedSlack  > slack) {
+                console.log("Got message too soon");
+                if(AliveTooSoonAction === 1) doWarning(obj);
+                else if(AliveTooSoonAction === 2) doError(obj);
+            }
+            if(state[objName(obj)].lastMessageTs != 0) console.log("used slack " + usedSlack);
         }
-
-        usedSlack = state[objName(obj)].lastMessageTs + 10000 - nowTs;
-        if(usedSlack < 0) usedSlack =- usedSlack;
-        if(state[objName(obj)].lastMessageTs != 0) console.log("used slack " + usedSlack);
-
         state[objName(obj)].lastMessageTs = nowTs;
 
         if(state[objName(obj)].errorLevel == 0 && state[objName(obj)].warningLevel == 0) setDivColor4Obj(obj, "green");
