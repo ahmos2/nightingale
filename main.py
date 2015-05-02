@@ -52,8 +52,8 @@ class watchdog(object):
             print sign2be[:8],signature[:8],prevSignature[:8]
         if prevSignature == None or sign2be == signature:
             self.setStateValue(self.UniqueNameForInstance(company,ship,controller,instance), "signature", signature)
-            return False
-        return True
+            return True
+        return False
     def UniqueNameForInstance(self,company,ship,controller,instance):
         return company+":"+ship+":"+controller+":"+instance
     def getStateValue(self,instanceName, key):
