@@ -1,4 +1,5 @@
-import cherrypy,os,json,hmac,hashlib
+import cherrypy,os,json,hmac,hashlib,ptvsd
+ptvsd.enable_attach(secret = 'joshua')
 from ws4py.server.cherrypyserver import WebSocketPlugin, WebSocketTool
 from ws4py.websocket import WebSocket,EchoWebSocket
 

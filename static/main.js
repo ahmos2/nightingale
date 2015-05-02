@@ -60,8 +60,7 @@ function doWarning(obj)
 }
 
 ws.onmessage = function(evt) {
-    var obj;
-    eval("obj=" + evt.data)
+    var obj=JSON.parse(evt.data);
     if(state[objName(obj)] === null || state[objName(obj)] === undefined)
         state[objName(obj)]=
             {
@@ -79,10 +78,9 @@ ws.onmessage = function(evt) {
         if(state[objName(obj)].warningLevel > 0)state[objName(obj)].warningLevel--;
 
         if(state[objName(obj)].lastMessageTs != 0) {
-            usedSlack = state[objName(obj)].lastMessageTs + 10000 - nowTs;
-            if(usedSlack < 0) usedSlack =- usedSlack;
-
-            if(usedSlack  > slack) {
+            usedSlack = nowTs - state[objName(obj)].lastMessageTs - 10000;
+            console.log(nowTs+","+state[objName(obj)].lastMessageTs)
+            if(usedSlack  < -slack) {
                 console.log("Got message too soon");
                 if(AliveTooSoonAction === 1) doWarning(obj);
                 else if(AliveTooSoonAction === 2) doError(obj);
