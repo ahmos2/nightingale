@@ -1,6 +1,7 @@
 var AliveTooSoonAction = 2, AliveTooLateAction = 1;
 var WarningEscalate2ErrorTrigger = 2;
 var slack = 500;
+var timeoutCheckTime = 1000;
 
 var state={};
 var ws = new WebSocket("wss://" + window.location.host + "/ws");
@@ -91,10 +92,12 @@ ws.onmessage = function(evt) {
 
         if(state[objName(obj)].errorLevel == 0 && state[objName(obj)].warningLevel == 0) setDivColor4Obj(obj, "green");
         state[objName(obj)].timer = setInterval(function() {
-            if(AliveTooLateAction === 1)
-                doWarning(obj);
-            if(AliveTooLateAction === 2) 
-                doError(obj);
-        }, 10000 + slack);
+            if(new Date().getTime > nowTs + 10000 + slack) {
+                if(AliveTooLateAction === 1)
+                    doWarning(obj);
+                if(AliveTooLateAction === 2) 
+                    doError(obj);
+            }
+        }, timeoutCheckTime);
     }
 }
