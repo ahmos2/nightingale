@@ -1,6 +1,6 @@
 var AliveTooSoonAction = 2, AliveTooLateAction = 1;
 var WarningEscalate2ErrorTrigger = 2;
-var slack = 50;
+var slack = 500;
 
 var state={};
 var ws = new WebSocket("wss://" + window.location.host + "/ws");
