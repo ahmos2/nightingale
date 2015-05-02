@@ -92,7 +92,7 @@ ws.onmessage = function(evt) {
 
         if(state[objName(obj)].errorLevel == 0 && state[objName(obj)].warningLevel == 0) setDivColor4Obj(obj, "green");
         state[objName(obj)].timer = setInterval(function() {
-            if(new Date().getTime > nowTs + 10000 + slack) {
+            if(new Date().getTime() > nowTs + 10000 + slack) {
                 if(AliveTooLateAction === 1)
                     doWarning(obj);
                 if(AliveTooLateAction === 2) 
