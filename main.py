@@ -9,7 +9,7 @@ cherrypy.tools.websocket = WebSocketTool()
 
 class WSHandler(WebSocket):
     def received_message(self, message):
-        self.send(message.data, message.is_binary)
+        cherrypy.engine.publish('websocket-broadcast',message)
 
 class watchdog(object):
     instanceState={}
