@@ -74,7 +74,7 @@ ws.onmessage = function(evt) {
     var nowTs=new Date().getTime();
 
     if (obj.type === "error") doError(obj);
-    else {
+    else if(obj.type === "alive") {
         if(state[objName(obj)].timer != 0) clearInterval(state[objName(obj)].timer);
         if(state[objName(obj)].warningLevel > 0)state[objName(obj)].warningLevel--;
 
