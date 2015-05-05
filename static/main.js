@@ -60,6 +60,8 @@ function doWarning(obj)
     else doError(obj)
 }
 
+ws.onerror = function(evt) {console.log("WebSocket error");alert("WebSocket error");}
+ws.onclose = function(evt) {console.log("WebSocket disconnect");alert("WebSocket disconnect");}
 ws.onmessage = function(evt) {
     var obj=JSON.parse(evt.data);
     if(state[objName(obj)] === null || state[objName(obj)] === undefined)
