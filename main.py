@@ -43,6 +43,9 @@ class watchdog(object):
         cherrypy.engine.publish('websocket-broadcast',json.dumps({"type":"error","company":company,"ship":ship,"controller":controller,"instance":instance,"error":error}))
         return "ok"
     @cherrypy.expose
+    def State(self):
+        return json.dumps(self.instanceState)
+    @cherrypy.expose
     def ws(self):
         cherrypy.request.ws_handler
 
