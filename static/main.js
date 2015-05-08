@@ -67,7 +67,8 @@ xhr.onload=function(e) {
 
     for(var instanceName in state) {
         state[instanceName].timer=state[instanceName].lastMessageTs=0;
-        setDivColor4Obj(state[instanceName], "green");
+        if(state[instanceName].lastError!=undefined) {state[instanceName].errorLevel=0;doError(state[instanceName]);}
+        else setDivColor4Obj(state[instanceName], "green");
     }
 }
 xhr.open("GET", "/State", true);
