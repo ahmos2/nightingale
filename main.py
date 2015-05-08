@@ -42,6 +42,9 @@ class watchdog(object):
             return "Signature check failed"
         cherrypy.engine.publish('websocket-broadcast',json.dumps({"type":"error","company":company,"ship":ship,"controller":controller,"instance":instance,"error":error}))
         self.setStateValue(self.UniqueNameForInstance(company,ship,controller,instance), "lastError",(error,self.getStateValue(self.UniqueNameForInstance(company,ship,controller,instance), "lastAlive")))
+        if self.getStateValue(self.UniqueNameForInstance(company,ship,controller,instance), "errorLevel") <> None:
+            self.setStateValue(self.UniqueNameForInstance(company,ship,controller,instance), "errorLevel",self.getStateValue(self.UniqueNameForInstance(company,ship,controller,instance), "errorLevel")+1)
+        self.setStateValue(self.UniqueNameForInstance(company,ship,controller,instance), "errorLevel",1)
         return "ok"
     @cherrypy.expose
     def State(self):
@@ -51,6 +54,12 @@ class watchdog(object):
         cherrypy.request.ws_handler
     def CheckSignature(self,company,ship,controller,instance,signature):
         prevSignature = self.getStateValue(self.UniqueNameForInstance(company,ship,controller,instance), "signature")
+
+        self.setStateValue(self.UniqueNameForInstance(company,ship,controller,instance), "company", company)
+        self.setStateValue(self.UniqueNameForInstance(company,ship,controller,instance), "ship", ship)
+        self.setStateValue(self.UniqueNameForInstance(company,ship,controller,instance), "controller", controller)
+        self.setStateValue(self.UniqueNameForInstance(company,ship,controller,instance), "instance", instance)
+
         if prevSignature <> None:
             sign2be = hmac.new(privatekey, prevSignature, hashlib.sha512).hexdigest()
             print sign2be[:8],signature[:8],prevSignature[:8]

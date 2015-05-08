@@ -60,6 +60,19 @@ function doWarning(obj)
     else doError(obj)
 }
 
+var xhr=new XMLHttpRequest()
+xhr.onload=function(e) {
+    var o=JSON.parse(xhr.responseText)
+    state=o;
+
+    for(var instanceName in state) {
+        state[instanceName].timer=state[instanceName].lastMessageTs=0;
+        setDivColor4Obj(state[instanceName], "green");
+    }
+}
+xhr.open("GET", "/State", true);
+xhr.send();
+
 ws.onerror = function(evt) {console.log("WebSocket error");alert("WebSocket error");document.getElementById("wsStateDiv").style.backgroundColor="yellow";}
 ws.onclose = function(evt) {console.log("WebSocket disconnect");alert("WebSocket disconnect");document.getElementById("wsStateDiv").style.backgroundColor="red";}
 ws.onopen = function(evt) {console.log("WebSocket connect");document.getElementById("wsStateDiv").style.backgroundColor="green";}
