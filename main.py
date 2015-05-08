@@ -41,6 +41,7 @@ class watchdog(object):
             cherrypy.engine.publish('websocket-broadcast',json.dumps({"type":"error","company":company,"ship":ship,"controller":controller,"instance":instance,"error":"Signature check failed"}))
             return "Signature check failed"
         cherrypy.engine.publish('websocket-broadcast',json.dumps({"type":"error","company":company,"ship":ship,"controller":controller,"instance":instance,"error":error}))
+        self.setStateValue(self.UniqueNameForInstance(company,ship,controller,instance), "lastError",(error,self.getStateValue(self.UniqueNameForInstance(company,ship,controller,instance), "lastAlive")))
         return "ok"
     @cherrypy.expose
     def State(self):
@@ -48,7 +49,6 @@ class watchdog(object):
     @cherrypy.expose
     def ws(self):
         cherrypy.request.ws_handler
-
     def CheckSignature(self,company,ship,controller,instance,signature):
         prevSignature = self.getStateValue(self.UniqueNameForInstance(company,ship,controller,instance), "signature")
         if prevSignature <> None:
