@@ -1,4 +1,4 @@
-import cherrypy,os,json,hmac,hashlib,ptvsd
+import cherrypy,os,json,hmac,hashlib,ptvsd,argparse
 ptvsd.enable_attach(secret = 'joshua')
 from ws4py.server.cherrypyserver import WebSocketPlugin, WebSocketTool
 from ws4py.websocket import WebSocket,EchoWebSocket
@@ -30,7 +30,7 @@ class watchdog(object):
     @cherrypy.expose
     def Reset(self,company,ship,controller,instance,signature):
         print company,ship,controller,instance
-        self.setStateValue(self.UniqueNameForInstance(company,ship,controller,instance), "signature", "Never gonna let you down")
+        self.setStateValue(self.UniqueNameForInstance(company,ship,controller,instance), "signature", args.signature)
         if self.CheckSignature(company,ship,controller,instance,signature):
             return "ok"
         return "Signature check failed"
@@ -86,14 +86,21 @@ class watchdog(object):
             self.instanceState[instanceName]={}
         self.instanceState[instanceName][key]=value
 
+parser=argparse.ArgumentParser()
+parser.add_argument("--privatekey", help="Key to verify signatures", default="Never gonna give you up")
+parser.add_argument("--signature", help="Initial signature", default="Never gonna let you down")
+parser.add_argument("--certkey", help="Private key for the server certificate", default="/home/pi/certificate/remote1.key")
+parser.add_argument("--certificate",help="Server certificate", default="/home/pi/certificate/remote1.crt")
+parser.add_argument("--certchain",  help="Certs for root and intermediate CAs", default="/home/pi/certificate/rootCA.pem")
+args=parser.parse_args()
 
-privatekey="Never gonna give you up"
+privatekey=args.privatekey
 cherrypy.config.update(
                        {
                            'server.ssl_module':'builtin',
-                           'server.ssl_certificate':'/home/pi/certificate/remote1.crt',
-                           'server.ssl_private_key':'/home/pi/certificate/remote1.key',
-                           'server.certificate_chain':'/home/pi/certificate/rootCA.pem',
+                           'server.ssl_certificate':args.certificate,
+                           'server.ssl_private_key':args.certkey,
+                           'server.certificate_chain':args.certchain,
                            '/static' : 
                                {
                                    'tools.staticdir.root': os.path.abspath(os.path.join(os.path.dirname(__file__), 'static'))
