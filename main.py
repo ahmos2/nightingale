@@ -35,6 +35,11 @@ class watchdog(object):
             return "ok"
         return "Signature check failed"
     @cherrypy.expose
+    def ResetErrorState(self,company,ship,controller,instance):
+        self.setStateValue(self.UniqueNameForInstance(company,ship,controller,instance), "lastError",None)
+        self.setStateValue(self.UniqueNameForInstance(company,ship,controller,instance), "errorLevel",None)
+        self.setStateValue(self.UniqueNameForInstance(company,ship,controller,instance), "warningLevel",None)
+    @cherrypy.expose
     def Alert(self,company,ship,controller,instance,error,signature):
         print company,ship,controller,instance,error
         if not self.CheckSignature(company,ship,controller,instance,signature):

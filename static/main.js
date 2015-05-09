@@ -120,3 +120,13 @@ ws.onmessage = function(evt) {
         }, timeoutCheckTime);
     }
 }
+
+function ResetErrorState() {
+    for(var instanceName in state) {
+        nameParts=instanceName.split(':');
+        var xhr=new XMLHttpRequest();
+        xhr.open("GET", "/ResetErrorState?company="+nameParts[0]+"&ship="+nameParts[1]+"&controller="+nameParts[2]+"&instance="+nameParts[3],false);
+        xhr.send();
+    }
+    location.reload();
+}
