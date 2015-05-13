@@ -2,10 +2,13 @@ import cherrypy,os,json,hmac,hashlib,ptvsd,argparse
 ptvsd.enable_attach(secret = 'joshua')
 from ws4py.server.cherrypyserver import WebSocketPlugin, WebSocketTool
 from ws4py.websocket import WebSocket,EchoWebSocket
+from cherrypy.lib import auth_basic
 
 cherrypy.config.update({'server.socket_host' : '0.0.0.0'})
 WebSocketPlugin(cherrypy.engine).subscribe()
 cherrypy.tools.websocket = WebSocketTool()
+
+USER={'ws2log':'ws2log', 'admin':'admin'}
 
 class WSHandler(WebSocket):
     def received_message(self, message):
@@ -112,12 +115,18 @@ cherrypy.config.update(
 
 print cherrypy.config
 cherrypy.quickstart(watchdog(),"/",config={
-        '/ws': {
-            'tools.websocket.on': True,
-            'tools.websocket.handler_cls': WSHandler
-            },
-  '/static' : {
-    'tools.staticdir.on'            : True,
-    'tools.staticdir.dir'           : os.path.join(os.path.abspath(os.path.dirname(__file__)), 'static')
+    '/ws': {
+        'tools.websocket.on': True,
+        'tools.websocket.handler_cls': WSHandler,
+        'tools.auth_basic.on': True,
+        'tools.auth_basic.realm': 'nightingale',
+        'tools.auth_basic.checkpassword': auth_basic.checkpassword_dict(USER),
+    },
+    '/static' : {
+        'tools.staticdir.on'            : True,
+        'tools.staticdir.dir'           : os.path.join(os.path.abspath(os.path.dirname(__file__)), 'static'),
+        'tools.auth_basic.on': True,
+        'tools.auth_basic.realm': 'nightingale',
+        'tools.auth_basic.checkpassword': auth_basic.checkpassword_dict(USER)
   }
 })
