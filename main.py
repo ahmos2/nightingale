@@ -105,6 +105,9 @@ cherrypy.config.update(
                            'server.ssl_certificate':args.certificate,
                            'server.ssl_private_key':args.certkey,
                            'server.certificate_chain':args.certchain,
+                           'tools.auth_basic.on': True,
+                           'tools.auth_basic.realm': 'nightingale',
+                           'tools.auth_basic.checkpassword': auth_basic.checkpassword_dict(USER),
                            '/static' : 
                                {
                                    'tools.staticdir.root': os.path.abspath(os.path.join(os.path.dirname(__file__), 'static'))
@@ -118,16 +121,10 @@ print cherrypy.config
 cherrypy.quickstart(watchdog(),"/",config={
     '/ws': {
         'tools.websocket.on': True,
-        'tools.websocket.handler_cls': WSHandler,
-        'tools.auth_basic.on': True,
-        'tools.auth_basic.realm': 'nightingale',
-        'tools.auth_basic.checkpassword': auth_basic.checkpassword_dict(USER),
+        'tools.websocket.handler_cls': WSHandler
     },
     '/static' : {
         'tools.staticdir.on'            : True,
-        'tools.staticdir.dir'           : os.path.join(os.path.abspath(os.path.dirname(__file__)), 'static'),
-        'tools.auth_basic.on': True,
-        'tools.auth_basic.realm': 'nightingale',
-        'tools.auth_basic.checkpassword': auth_basic.checkpassword_dict(USER)
+        'tools.staticdir.dir'           : os.path.join(os.path.abspath(os.path.dirname(__file__)), 'static')
   }
 })
