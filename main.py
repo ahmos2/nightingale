@@ -8,7 +8,7 @@ cherrypy.config.update({'server.socket_host' : '0.0.0.0'})
 WebSocketPlugin(cherrypy.engine).subscribe()
 cherrypy.tools.websocket = WebSocketTool()
 
-USER={'ws2log':'ws2log', 'admin':'admin'}
+USER={'ws2log':'ws2log', 'admin':'admin', 'remote':'remote'}}
 
 class WSHandler(WebSocket):
     def received_message(self, message):
