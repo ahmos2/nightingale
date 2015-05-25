@@ -52,7 +52,8 @@ class watchdog(object):
         self.setStateValue(self.UniqueNameForInstance(company,ship,controller,instance), "lastError",(error,self.getStateValue(self.UniqueNameForInstance(company,ship,controller,instance), "lastAlive")))
         if self.getStateValue(self.UniqueNameForInstance(company,ship,controller,instance), "errorLevel") <> None:
             self.setStateValue(self.UniqueNameForInstance(company,ship,controller,instance), "errorLevel",self.getStateValue(self.UniqueNameForInstance(company,ship,controller,instance), "errorLevel")+1)
-        self.setStateValue(self.UniqueNameForInstance(company,ship,controller,instance), "errorLevel",1)
+        else:
+            self.setStateValue(self.UniqueNameForInstance(company,ship,controller,instance), "errorLevel",1)
         return "ok"
     @cherrypy.expose
     def State(self):
