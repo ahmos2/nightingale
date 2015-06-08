@@ -1,6 +1,8 @@
 import cherrypy,json,hmac,hashlib
+from argumentHandler import *
 class watchdog(object):
     instanceState={}
+    privatekey=args.privatekey
 
     @cherrypy.expose
     def index(self):
@@ -46,17 +48,17 @@ class watchdog(object):
     def ws(self):
         cherrypy.request.ws_handler
     def CheckSignature(self,company,ship,controller,instance,signature):
-        prevSignature = self.getStateValue(self.UniqueNameForInstance(company,ship,controller,instance), "signature")
+        self.prevSignature = self.getStateValue(self.UniqueNameForInstance(company,ship,controller,instance), "signature")
 
         self.setStateValue(self.UniqueNameForInstance(company,ship,controller,instance), "company", company)
         self.setStateValue(self.UniqueNameForInstance(company,ship,controller,instance), "ship", ship)
         self.setStateValue(self.UniqueNameForInstance(company,ship,controller,instance), "controller", controller)
         self.setStateValue(self.UniqueNameForInstance(company,ship,controller,instance), "instance", instance)
 
-        if prevSignature <> None:
-            sign2be = hmac.new(privatekey, prevSignature, hashlib.sha512).hexdigest()
-            print sign2be[:8],signature[:8],prevSignature[:8]
-        if prevSignature == None or sign2be == signature:
+        if self.prevSignature <> None:
+            sign2be = hmac.new(self.privatekey, self.prevSignature, hashlib.sha512).hexdigest()
+            print sign2be[:8],signature[:8],self.prevSignature[:8]
+        if self.prevSignature == None or sign2be == signature:
             self.setStateValue(self.UniqueNameForInstance(company,ship,controller,instance), "signature", signature)
             return True
         self.setStateValue(self.UniqueNameForInstance(company,ship,controller,instance), "signatureCheckFail", (signature,self.getStateValue(self.UniqueNameForInstance(company,ship,controller,instance), "lastAlive")))
