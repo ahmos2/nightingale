@@ -21,10 +21,13 @@ class watchdog(object):
         print company,ship,controller,instance
         self.setStateValue(self.UniqueNameForInstance(company,ship,controller,instance), "signature", args.signature)
         if self.CheckSignature(company,ship,controller,instance,signature):
+            cherrypy.engine.publish('websocket-broadcast',json.dumps({"type","reset","company":company,"ship":ship,"controller":controller,"instance":instance}))
             return "ok"
+        cherrypy.engine.publish('websocket-broadcast',json.dumps({"type":"error","company":company,"ship":ship,"controller":controller,"instance":instance,"error":"Signature check failed"}))
         return "Signature check failed"
     @cherrypy.expose
     def ResetErrorState(self,company,ship,controller,instance):
+        cherrypy.engine.publish('websocket-broadcast',json.dumps({"type","reseterrorstate","company":company,"ship":ship,"controller":controller,"instance":instance}))
         self.setStateValue(self.UniqueNameForInstance(company,ship,controller,instance), "lastError",None)
         self.setStateValue(self.UniqueNameForInstance(company,ship,controller,instance), "errorLevel",None)
         self.setStateValue(self.UniqueNameForInstance(company,ship,controller,instance), "warningLevel",None)
