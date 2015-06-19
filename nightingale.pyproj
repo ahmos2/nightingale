@@ -29,6 +29,9 @@
     <Compile Include="argumentHandler.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="statemanager.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="main.py" />
     <Compile Include="watchdog.py">
       <SubType>Code</SubType>
