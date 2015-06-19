@@ -45,7 +45,7 @@ class watchdog(object):
         return "ok"
     @cherrypy.expose
     def State(self):
-        return json.dumps(self.instanceState)
+        return "Not implemented"
     @cherrypy.expose
     def ws(self):
         cherrypy.request.ws_handler
