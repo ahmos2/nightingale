@@ -1,5 +1,5 @@
-import os,ptvsd
-ptvsd.enable_attach(secret = 'joshua')
+import os #,ptvsd
+#ptvsd.enable_attach(secret = 'joshua')
 from argumentHandler import *
 from watchdog import *
 from WSHandler import *
